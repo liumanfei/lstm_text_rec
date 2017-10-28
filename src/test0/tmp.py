@@ -33,4 +33,8 @@ def plot_char(char):
 if __name__ == '__main__':
 	
 	# print(read_dictionary(dic_dir='../data/dic_7356.txt'))
-	plot_char()
+	# plot_char()
+	i=10
+	if i>20:
+		j=2
+	print(j)
