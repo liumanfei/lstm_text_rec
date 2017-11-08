@@ -65,10 +65,10 @@ def plot_char2(char):#	x=char[0],y=char[1]
 	plt.axis('equal')
 	plt.show()
 def get_sparse_char(char, TdistConst= 8,TcosConst = 0.99):
-	
 
 
-def processing_write_dataset(data_dir,label_dir,file_name,num = None):#,data_size,time_dense_size) return data_list(每一个元素list里面包含x,y,65535),label_int_list
+
+def processing_write_dataset(data_dir,label_dir,file_name,start = None,end = None):#,data_size,time_dense_size) return data_list(每一个元素list里面包含x,y,65535),label_int_list
 	print('reading & sparsing data',data_dir,'from',datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S'),'......')
 	data_int = np.fromfile(data_dir,'int32')
 	point_num_sum = 0
@@ -98,7 +98,7 @@ def processing_write_dataset(data_dir,label_dir,file_name,num = None):#,data_siz
 	agents =10
 	chunksize = 9
 	with Pool(processes = agents) as pool:
-		data_sparse_diff_label = pool.map(get_sparse_diff_char, data_label_list[:num], chunksize )
+		data_sparse_diff_label = pool.map(get_sparse_diff_char, data_label_list[start:end], chunksize )
 	print('finish sparsing & diff data at ',datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S'))
 
 	with open(file_name,'wb') as file:

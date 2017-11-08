@@ -350,7 +350,7 @@ def get_sparse_diff_line(data_label, TdistConst= 8,TcosConst = 0.99):#return cha
 	char_sparse_diff.append([x_max-x_last+x_first-x_min,line[1]-line[len(line)-5],1])
 	line_sparse_diff.append(char_sparse_diff)
 	return [line_sparse_diff,data_label[1]]
-def sample_generator(data_label,time_dense_size=160,channel = 3):#	[[x,y,state],label],  return [[x,y,state],label]
+def sample_generator(data_label,absolute_max_label_len,time_dense_size=160,channel = 3):#	[[x,y,state],label],  return [[x,y,state],label]
 	#char need a structure of '[0]sparse_line_x,[1]sparse_line_y,[2]chars_point_num,[3]chars_left_bound, [4]chars_right_bound'
 	# def sample_generator(x,y,chars_point_num,chars_left_bound,chars_right_bound,label,time_dense_size=300):
 	data = data_label[0]
@@ -362,13 +362,12 @@ def sample_generator(data_label,time_dense_size=160,channel = 3):#	[[x,y,state],
 	if sum(chars_point_num)>time_dense_size and chars_num>1:
 		char_index = random.randint(0,chars_num-1)
 
-	sample_data = np.ones( [time_dense_size, channel])
+	sample_data = np.zeros( [time_dense_size, channel])
 	sample_label = []
 	point_count=0
 
-	while point_count+chars_point_num[char_index] <= time_dense_size :
+	while point_count+chars_point_num[char_index] <= time_dense_size and len(sample_label)<absolute_max_label_len :
 		sample_data[point_count:point_count+chars_point_num[char_index]] = data[char_index][:]
-		# print('char_index',char_index)
 		sample_label.append(label[char_index])
 		point_count+=chars_point_num[char_index]
 
@@ -383,7 +382,7 @@ def read_dataset(file_dir):
 	with open(file_dir,'rb') as file :
 		data_label_set = pickle.load(file)
 	return data_label_set
-def processing_write_dataset(data_dir,label_dir,file_name,num = None):#,data_size,time_dense_size) return data_list(每一个元素list里面包含x,y,65535),label_int_list
+def processing_write_dataset(data_dir,label_dir,file_name,start = None,end = None):#,data_size,time_dense_size) return data_list(每一个元素list里面包含x,y,65535),label_int_list
 	print('reading & sparsing data',data_dir,'from',datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S'),'......')
 	data_int = np.fromfile(data_dir,'int32')
 	point_num_sum = 0
@@ -402,30 +401,33 @@ def processing_write_dataset(data_dir,label_dir,file_name,num = None):#,data_siz
 
 	print('finish reading at',datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S'))
 	print('sparsing & diff data from',datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S'))
-	for i in range(32*561,32*562,):
-		# char = data_label_list[i][0]
-		# plot_char(data_label_list[i][0])
-		print(data_label_list[i][1])
-		# sparse = get_sparse_line(char)
-	# 	plot_char2 (sparse)
-		# diff_char = diff(sparse[0],sparse[1])
-	# 	# print(sparse[0][:3])
-	# 	print_label(data_label_list[i][1])
-	# 	plot_char4(diff_char)
-		sparse_diff = get_sparse_diff_line(data_label_list[i])
-		plot_char3(sparse_diff)
-		# print_label(sparse_diff[1])
-		# print('data_label_list[i][1]', data_label_list[i][1])
-		sample_data = sample_generator(sparse_diff)
-		plot_char5(sample_data)
+	# for i in range(32*560,32*569,):
+	# 	# char = data_label_list[i][0]
+	# 	# plot_char(data_label_list[i][0])
+	# 	# print(data_label_list[i][1])
+	# 	# sparse = get_sparse_line(char)
+	# # 	plot_char2 (sparse)
+	# 	# diff_char = diff(sparse[0],sparse[1])
+	# # 	# print(sparse[0][:3])
+	# # 	print_label(data_label_list[i][1])
+	# # 	plot_char4(diff_char)
+
+	# 	sparse_diff = get_sparse_diff_line(data_label_list[i])
+	# 	# plot_char3(sparse_diff)
+	# 	# print_label(sparse_diff[1])
+	# 	# print('data_label_list[i][1]', data_label_list[i][1])
+	# 	sample_data = sample_generator(sparse_diff)
+	# 	# plot_char5(sample_data)
+	# input('wait')
 	agents =10
 	chunksize = 9
 	with Pool(processes = agents) as pool:
-		data_sparse_diff_label = pool.map(get_sparse_diff_line, data_label_list[:num], chunksize )
+		data_sparse_diff_label = pool.map(get_sparse_diff_line, data_label_list[start:end], chunksize )
 	print('finish sparsing & diff data at ',datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S'))
 
 	with open(file_name,'wb') as file:
 		pickle.dump(data_sparse_diff_label, file,1)
+	print('finish write to file at ',datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S'))
 	return #data_list,label_int_list#,max_label_len,label_str_list
 
 def ctc_lambda_func(args):
@@ -495,7 +497,7 @@ class batch_generator(Callback): #dataset:[0]xy data with 65535,[1]label_int
 				label_length[i] = 1	 
 				source_str.append('') 
 			else:
-				sample_data,sample_label = sample_generator(self.data_label_list[cur_sample_index+i], self.time_dense_size, self.channel)
+				sample_data,sample_label = sample_generator(self.data_label_list[cur_sample_index+i],self.absolute_max_label_len, self.time_dense_size, self.channel)
 				if len(sample_data)>0 and len(sample_label)>0:
 					X_data[i,:len(sample_data)] = sample_data[:]
 					labels[i,:len(sample_label)]= sample_label[:]
@@ -599,12 +601,9 @@ class VizCallback(Callback):
 
 def train(start_epoch, stop_epoch):
 	minibatch_size = 32
-	absolute_max_label_length = 40
+	absolute_max_label_length = 15
 	# max_epoch = stop_epoch
 	label_class_num =len(char_str)+1# 7357 #len(label_index_list.keys())+1
-
-	# train_set_size = 90 
-	# test_set_size = 00
 
 	model_file_dir = './'
 	record_txt_name = './accuracy_loss.txt'
@@ -618,19 +617,15 @@ def train(start_epoch, stop_epoch):
 	test_dir = '../data/com.bin'
 	train_label_dir = '../data/train.txt'
 	test_label_dir = '../data/com.txt'
-	train_sparse_diff_data_dir = 'train_sparse_diff.txt'
-	# train_sparse_diff_data_dir = '../data/train_sparse_diff.txt'
-	# test_sparse_diff_data_dir = '../data/test_sparse_diff.txt'
-	processing_write_dataset(train_dir,train_label_dir,train_sparse_diff_data_dir)#,train_set_size,time_dense_size)
+	# train_sparse_diff_data_dir = 'train_sparse_diff.txt'
+	train_sparse_diff_data_dir = '../data/train_sparse_diff.txt'
+	test_sparse_diff_data_dir = '../data/test_sparse_diff.txt'
+	# processing_write_dataset(train_dir,train_label_dir,train_sparse_diff_data_dir,32*560,32*600)#,train_set_size,time_dense_size)
 	# processing_write_dataset(test_dir,test_label_dir,test_sparse_diff_data_dir)#,tesize,time_dense_size)
 	print('reading from:', datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S'))
+
 	data_trainset = read_dataset(train_sparse_diff_data_dir)
-	# print('end at:', datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S'))
-	for i in range(32*560,33*560):
-	# for i in range(32,35):
-		plot_char3(data_trainset[i])
-	# print(len(data_trainset[0]))
-	# data_testset = read_dataset(test_sparse_diff_data_dir)
+	data_testset = read_dataset(test_sparse_diff_data_dir)
 	print('end at:', datetime.datetime.now().strftime('%Y%m%d_%H:%M:%S'))
 
 	train_data = batch_generator(data_label_list=data_trainset, batch_size = minibatch_size, label_classes = label_class_num, 
