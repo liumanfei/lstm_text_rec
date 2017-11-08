@@ -1,0 +1,33 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.7	//
+VizCallback	.\test0\textline.py	/^class VizCallback(Callback):$/;"	c
+__init__	.\test0\textline.py	/^	def __init__(self, dataset, batch_size = 32, label_classes = len(char_str)+1,absolute_max_label_len = 20, channel =3 ,time_dense_size = 160):$/;"	m	class:batch_generator
+__init__	.\test0\textline.py	/^	def __init__(self, out_txt_path, model_file_dir,test_func,train_sample_gen,train_set_size,$/;"	m	class:VizCallback
+batch_generator	.\test0\textline.py	/^class batch_generator(Callback): #dataset:[0]xy data with 65535,[1]label_int$/;"	c
+ctc_lambda_func	.\test0\textline.py	/^def ctc_lambda_func(args):$/;"	f
+decode_batch	.\test0\textline.py	/^def decode_batch(test_func, word_batch):$/;"	f
+diff	.\test0\textline.py	/^def diff(x_list,y_list,time_dense_size=160): #return [[diff_x, diff_y, pen_state]*len(xlist)]$/;"	f
+get_batch	.\test0\textline.py	/^	def get_batch(self,  cur_sample_index, train=True):$/;"	m	class:batch_generator
+get_dataset_size	.\test0\textline.py	/^	def get_dataset_size(self):$/;"	m	class:batch_generator
+get_label_str	.\test0\textline.py	/^def get_label_str(label_int):$/;"	f
+get_output_size	.\test0\textline.py	/^	def get_output_size(self):$/;"	m	class:batch_generator
+get_sparse_char	.\test0\textline.py	/^def get_sparse_char(char, TdistConst= 8,TcosConst = 0.99):#return sparse_char_x,sparse_char_y,chars_point_num,	chars_left_bound, chars_right_bound$/;"	f
+move_x	.\test0\textline.py	/^def move_x(x_list,x_move):$/;"	f
+next_train	.\test0\textline.py	/^	def next_train(self):$/;"	m	class:batch_generator
+next_val	.\test0\textline.py	/^	def next_val(self):$/;"	m	class:batch_generator
+on_epoch_end	.\test0\textline.py	/^	def on_epoch_end(self, epoch, logs={}):$/;"	m	class:VizCallback
+on_train_begin	.\test0\textline.py	/^	def on_train_begin(self, logs={}):  $/;"	m	class:VizCallback
+on_train_end	.\test0\textline.py	/^	def on_train_end(self, logs={}):$/;"	m	class:VizCallback
+plot_char	.\test0\textline.py	/^def plot_char(char):$/;"	f
+plot_char	.\test0\tmp.py	/^def plot_char(char):$/;"	f
+plot_char2	.\test0\textline.py	/^def plot_char2(char):#	x=char[0],y=char[1]$/;"	f
+print_label	.\test0\textline.py	/^def print_label(label_int):$/;"	f
+read_dataset	.\test0\textline.py	/^def read_dataset(data_dir,label_dir):#,data_size,time_dense_size) return data_list(每一个元素list里面包含x,y,65535),label_int_list$/;"	f
+read_dictionary	.\test0\tmp.py	/^def read_dictionary(dic_dir='..\/data\/dic_7356.txt'):$/;"	f
+sample_generator	.\test0\textline.py	/^def sample_generator(char,label,time_dense_size=160):#	x=char[0], y=char[1],  return sample_x_list,sample_y_list,sample_label_list$/;"	f
+show_edit_distance	.\test0\textline.py	/^	def show_edit_distance(self, num, data_gen): #用友元函数实现比较好$/;"	m	class:VizCallback
+train	.\test0\textline.py	/^def train(start_epoch, stop_epoch):$/;"	f
