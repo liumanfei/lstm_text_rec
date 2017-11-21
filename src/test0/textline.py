@@ -350,9 +350,7 @@ def get_sparse_diff_line(data_label, TdistConst= 8,TcosConst = 0.99):#return cha
 	char_sparse_diff.append([x_max-x_last+x_first-x_min,line[1]-line[len(line)-5],1])
 	line_sparse_diff.append(char_sparse_diff)
 	return [line_sparse_diff,data_label[1]]
-def sample_generator(data_label,absolute_max_label_len,time_dense_size=160,channel = 3):#	[[x,y,state],label],  return [[x,y,state],label]
-	#char need a structure of '[0]sparse_line_x,[1]sparse_line_y,[2]chars_point_num,[3]chars_left_bound, [4]chars_right_bound'
-	# def sample_generator(x,y,chars_point_num,chars_left_bound,chars_right_bound,label,time_dense_size=300):
+def sample_generator(data_label,absolute_max_label_len,time_dense_size=160,channel = 3):#data_label=[[x,y,state],label],  return [[x,y,state],label]
 	data = data_label[0]
 	label = data_label[1]
 	chars_point_num=[len(data[i]) for i in range(0,len(data))]
